@@ -1,0 +1,7 @@
+first_name,last_name,graduation_year,degree,major,concentration,email,phone,industry,company,position,linkedin_url
+Alice,Nguyen,2018,MS,Information Systems & Technology,Data Science,email1@cgu.edu,123-456-7891,Technology,Google,Data Scientist,https://www.linkedin.com
+Brian,Lopez,2016,MS,Cybersecurity & Network Systems,Network Security,email2@cgu.edu,123-456-7891,Cybersecurity,Deloitte,Security Analyst,https://www.linkedin.com
+Carla,Martinez,2020,PhD,Information Systems & Technology,Knowledge Management,email3@cgu.edu,123-456-7891,Education,CSU Fullerton,Assistant Professor,https://www.linkedin.com
+David,Patel,2017,MS,Health Informatics,Clinical Systems,email4@cgu.edu,123-456-7891,Healthcare,Kaiser Permanente,Health Data Engineer,https://www.linkedin.com
+Elena,Khan,2019,MS,IT Innovation & Design,Product Design,email5@cgu.edu,123-456-7891,Technology,Microsoft,Product Manager,https://www.linkedin.com
+Frank,Olsen,2015,MS,Information Systems & Technology,Enterprise Systems,email6@cgu.edu,123-456-7891,Consulting,IBM,Solutions Architect,https://www.linkedin.com
