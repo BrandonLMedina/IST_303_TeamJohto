@@ -5,52 +5,53 @@ Alumni Network AI Dashboard
 
 Team Members
 
-| Name      | Role & Responsibilities  
-|-----------|-------------------------
-| Brandon   | Database Lead: Designs RAG backend, manages knowledge base, and builds 10 model student-alumni profiles 
-| Alexander | Python Developer: Supports agent development and backend logic 
-| Haoran    | Integration Engineer: Ensures smooth integration between RAG, ChatGPT, and dashboard components; monitors performance and system feasibility 
-| Prajwal   | API Integration & Python Development 
-| Nihaad    | Project Manager & Liaison with AI Squared (external AI partner) 
+| Name      | Role & Responsibilities                                                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Brandon   | Database Lead: Designs RAG backend, manages knowledge base, and builds 10 model student-alumni profiles                                      |
+| Alexander | Python Developer: Supports agent development and backend logic                                                                               |
+| Haoran    | Integration Engineer: Ensures smooth integration between RAG, ChatGPT, and dashboard components; monitors performance and system feasibility |
+| Prajwal   | API Integration & Python Development                                                                                                         |
+| Nihaad    | Project Manager & Liaison with AI Squared (external AI partner)                                                                              |
 
 ---
 
 Project Concept
 
-We are building an AI-powered Alumni Network Dashboard to bridge meaningful connections between students and alumni.  
+We are building an AI-powered Alumni Network Dashboard to bridge meaningful connections between students and alumni.
 
 This dashboard will:
-- Leverage agentic AI capabilities to surface real-time, contextual insights from alumni data.  
-- Be powered by ChatGPT (via API key) as the large language model (LLM), integrated with a Retrieval-Augmented Generation (RAG) architecture to enable intelligent querying of unstructured content.  
-  - If RAG cannot be implemented, we will loop back to SQL and assume the data is structured (leveraging our Database expert).  
-- Be developed in partnership with AI Squared (pending approval), who will build the Insight Agent Dashboard interface.  
-- Enable CGU or any participating university to visualize, search, and interact with alumni data to:  
-  1. Discover and connect with potential mentors  
-  2. Trace alumni career paths and outcomes  
-  3. Identify trends and generate AI-driven connection suggestions  
+
+- Leverage agentic AI capabilities to surface real-time, contextual insights from alumni data.
+- Be powered by ChatGPT (via API key) as the large language model (LLM), integrated with a Retrieval-Augmented Generation (RAG) architecture to enable intelligent querying of unstructured content.
+  - If RAG cannot be implemented, we will loop back to SQL and assume the data is structured (leveraging our Database expert).
+- Be developed in partnership with AI Squared (pending approval), who will build the Insight Agent Dashboard interface.
+- Enable CGU or any participating university to visualize, search, and interact with alumni data to:
+  1. Discover and connect with potential mentors
+  2. Trace alumni career paths and outcomes
+  3. Identify trends and generate AI-driven connection suggestions
 
 ---
 
 Stakeholders
 
-- University Administration: End-users benefiting from engagement analytics and alumni relations.  
-- Students: Users seeking mentors, career pathways, or networking opportunities.  
-- Alumni: Individuals whose data is featured; potential contributors/mentors.  
-- AI Squared: External AI company developing the Insight Dashboard with RAG & LLM integration.  
-- Project Team: Developers and planners ensuring the product vision is met.  
+- University Administration: End-users benefiting from engagement analytics and alumni relations.
+- Students: Users seeking mentors, career pathways, or networking opportunities.
+- Alumni: Individuals whose data is featured; potential contributors/mentors.
+- AI Squared: External AI company developing the Insight Dashboard with RAG & LLM integration.
+- Project Team: Developers and planners ensuring the product vision is met.
 
 ---
 
 User Stories (with Estimates)
- 
-| # | As a...             | I want to...                                                        | So that I can...                                        | Time Estimate 
-|---|---------------------|---------------------------------------------------------------------|---------------------------------------------------------|---------------
-| 1 | University Admin    | Search alumni based on industry, role, location, or graduation year | Identify outreach or event opportunities                | 8 hrs 
-| 2 | Student             | Ask AI dashboard for suggested mentors based on my major/interests  | Find relevant alumni to connect with                    | 12 hrs 
-| 3 | Alumni              | Be listed with a profile and opt-in for mentorship                  | Give back to the university and help students           | 5 hrs 
-| 4 | Admin/Student       | View analytics of alumni engagement trends                          | Understand where alumni are succeeding                  | 10 hrs 
-| 5 | Developer           | Connect RAG system to a database of 10 model profiles               | Enable real-time AI-powered search                      | 16 hrs 
-| 6 | PM/Team             | Collaborate with AI Squared through milestone syncs                 | Align internal goals with external partner deliverables | Ongoing (1–2 hrs/week) 
+
+| #   | As a...          | I want to...                                                        | So that I can...                                        | Time Estimate          |
+| --- | ---------------- | ------------------------------------------------------------------- | ------------------------------------------------------- | ---------------------- |
+| 1   | University Admin | Search alumni based on industry, role, location, or graduation year | Identify outreach or event opportunities                | 8 hrs                  |
+| 2   | Student          | Ask AI dashboard for suggested mentors based on my major/interests  | Find relevant alumni to connect with                    | 12 hrs                 |
+| 3   | Alumni           | Be listed with a profile and opt-in for mentorship                  | Give back to the university and help students           | 5 hrs                  |
+| 4   | Admin/Student    | View analytics of alumni engagement trends                          | Understand where alumni are succeeding                  | 10 hrs                 |
+| 5   | Developer        | Connect RAG system to a database of 10 model profiles               | Enable real-time AI-powered search                      | 16 hrs                 |
+| 6   | PM/Team          | Collaborate with AI Squared through milestone syncs                 | Align internal goals with external partner deliverables | Ongoing (1–2 hrs/week) |
 
 ---
 
@@ -58,17 +59,17 @@ Project Timeline
 
 - Part A (Ideation & Planning): Due 9/11
 
+- [Part B (Design & Implementation Start): Due 10/2](docs/Assignment%20Docs/Part%20B.md)  
+  Part B (Design & Implementation Start): Due 10/2
+  Team JOHTO Project: Part B - Alumni Network AI Dashboard
 
-- Part B (Design & Implementation Start): Due 10/2  
-Part B (Design & Implementation Start): Due 10/2
-Team JOHTO Project: Part B - Alumni Network AI Dashboard
 1. Decompose User Stories into Tasks
--User Story 1: Alumni (Brandon Medina Assigned)
--User Story: “As an alumnus of CGU, I want to give back by mentoring a student. I want to be able to create an account, log in, and see a dashboard of students I match with that have similar classes I took, or are interested in the industry I work in, or have the same degree concentration as me, or are in my location, so that I can connect with them.”
+   -User Story 1: Alumni (Brandon Medina Assigned)
+   -User Story: “As an alumnus of CGU, I want to give back by mentoring a student. I want to be able to create an account, log in, and see a dashboard of students I match with that have similar classes I took, or are interested in the industry I work in, or have the same degree concentration as me, or are in my location, so that I can connect with them.”
 
 Task 1 - Define database requirements - Estimated Hours 3
-	Alumni, Student, Classes Taken, Industry, Degree Concentration, Job Location
-  
+Alumni, Student, Classes Taken, Industry, Degree Concentration, Job Location
+
 Task 2 - Build database schema SQL - Estimated Hours 6
 Alumni - id (PK), first_name, last_name, email (unique), password_hash, graduation_year, degree, concentration_id (FK → degree_concentrations), industry_id (FK → industries), job_location_id (FK → job_locations), linkedin_url, created_at
 Students - id (PK), first_name, last_name, email (unique), password_hash, enrollment_year, expected_graduation_year, degree, concentration_id (FK → degree_concentrations), linkedin_url, created_at
@@ -136,7 +137,7 @@ Task 10 - Create dashboard page - Estimated Hours 6
 Create /dashboard route in main.py.
 Add dashboard.html template.
 Restrict dashboard results by role
-Display matched students  profile cards (name, degree, industry, location).
+Display matched students profile cards (name, degree, industry, location).
 
 Task 11 - Implement matching system - Estimated Hours 8
 Define match criteria weights (classes > concentration > industry > location).
@@ -174,10 +175,11 @@ Create user story for the project to track the progress
 As of October 1st
 
 ---
-| Milestone          | Due Date | Required Hours | Weekdays Available | Hours per day |
-|--------------------|----------|----------------|--------------------|---------------|
-| 1.0 (Tasks 1-9)    | Oct 23   | 40             | 17                 | 2.35          |
-| 2.0 (Tasks 10-13)  | Nov 20   | 29             | 20                 | 1.45          |
+
+| Milestone         | Due Date | Required Hours | Weekdays Available | Hours per day |
+| ----------------- | -------- | -------------- | ------------------ | ------------- |
+| 1.0 (Tasks 1-9)   | Oct 23   | 40             | 17                 | 2.35          |
+| 2.0 (Tasks 10-13) | Nov 20   | 29             | 20                 | 1.45          |
 
 ---
 
@@ -189,10 +191,9 @@ create service endpoint to return ranked mentors for a logged-in student (name, 
 create service endpoint to send a connection request (pending status)
 wire the student dashboard: Find Mentors button → ranked list; Connect button → request sent
 handle login/role checks and friendly error/empty states
-add  test queries to validate results and the connect flow
+add test queries to validate results and the connect flow
 
-
-User story 3 : Alex(system admin) 
+User story 3 : Alex(system admin)
 User Story: “As a university administrator I want to view alumni data visualizations on a dashboard using synthetic data during development so I can explore and validate how the system will display insights before connecting to real alumni records.”
 Task 1 - Setup environment (3-5 hours)
 Create a frontend folder for dashboard code(flask)
@@ -208,10 +209,10 @@ Return career/industry trends
 Filter queries
 Add synthetic updates(new alumni records every x seconds ) to simulate real time
 
-Task 3 - Dashboard Visualizations(10  hours)
+Task 3 - Dashboard Visualizations(10 hours)
 Alumni distribution by industry (bar chart/pie chart)
 Geographic alumni spread (map visualization)
-Career path timeline (Linechart/sankey diagram) 
+Career path timeline (Linechart/sankey diagram)
 Mentorship opt-in stats (gauge chart or progress bar)
 Engagement trends over time (line chart showing growth of student-alumni connections)
 
@@ -262,21 +263,24 @@ Use Flask test client to validate routes.
 - US: Developer RAG integration → Tasks: Set up RAG pipeline or SQL fallback, connect 10 profiles, validate retrieval quality. (Optional)
 
 2. Milestone 1.0 Features
+
 - Search functionality (Admin view).
 - Alumni and student profile creation
 - Analytics dashboard prototype (basic charts).
 - GitHub repo with working functional + test code.
-  
+
 3. Iterations for Milestone 1.0
-Iteration 1 (30 days,100 hrs total):
+   Iteration 1 (30 days,100 hrs total):
+
 - Database setup
 - API & backend logic
 - Synthetic dataset + alumni/student profiles
 - Basic dashboard integration
 
 Iteration 2 (60 days, 200 hrs total):
-- AI matching logic 
-- Dashboard analytics prototype 
+
+- AI matching logic
+- Dashboard analytics prototype
 - Profile opt-in implementation
 - Testing & refinement
 - Sync with AI Squared
@@ -284,30 +288,25 @@ Iteration 2 (60 days, 200 hrs total):
 Total work = 200 hrs, completed in 60 days (velocity assumed = 20 hrs/week/team member).
 
 4. Task Allocation
+
 - Brandon: Database schema, RAG setup, alumni profiles
 - Alexander: Python backend logic, mentor suggestion engine
 - Haoran: Dashboard integration, analytics prototype
 - Prajwal: API development, AI matching support
 - Nihaad: Schedule syncs with AI Squared, document progress, manage GitHub repo, create synthetic student profiles, implement AI matching logic, connect RAG/SQL backend, test queries
+
 5. Burn Down Chart
 
 <img width="1200" height="600" alt="burndown_chart" src="https://github.com/user-attachments/assets/1bf68f78-9d45-466d-9b6f-e5ca722da7ac" />
 
+6. [Stand-Up Meetings](docs/Standups)
 
-6. Stand-Up Meetings
 - Frequency: 2x/week (Tuesdays & Thursdays).
 - Logs/Agenda stored in GitHub repo
 - Example agenda: Progress updates, blockers, task reallocation.
 - Meeting notes uploaded as README files.
 
-
-- Part C (Prototype Review): Due 10/23  
-- Part D (Final Presentation): Due 11/20  
-
----
-
-
-- Part C (Prototype Review): Due 10/23  
-- Part D (Final Presentation): Due 11/20  
+- Part C (Prototype Review): Due 10/23
+- Part D (Final Presentation): Due 11/20
 
 ---
