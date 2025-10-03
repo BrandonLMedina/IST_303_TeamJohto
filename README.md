@@ -174,10 +174,10 @@ Create user story for the project to track the progress
 As of October 1st
 
 ---
-| Milestone             | Due Date     | Required Hours  | Weekdays Available| Hours per day 
-|----------------------|---------------|-----------------|-------------------|
-| 1.0 (Tasks 1-9)      | Oct 23        | 40              | 17                | 2.35
-| 2.0 (Tasks 10-13)    | Nov 20        | 29              | 20                | 1.45
+| Milestone          | Due Date | Required Hours | Weekdays Available | Hours per day |
+|--------------------|----------|----------------|--------------------|---------------|
+| 1.0 (Tasks 1-9)    | Oct 23   | 40             | 17                 | 2.35          |
+| 2.0 (Tasks 10-13)  | Nov 20   | 29             | 20                 | 1.45          |
 
 ---
 
