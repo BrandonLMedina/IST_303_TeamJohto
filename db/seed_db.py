@@ -5,8 +5,8 @@ from pathlib import Path
 # Paths
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR.parent / "instance" / "database.db"
-ALUMNI_CSV = BASE_DIR / "alumni.csv"
-STUDENTS_CSV = BASE_DIR / "students.csv"
+ALUMNI_CSV = BASE_DIR / "test_data/alumni.csv"
+STUDENTS_CSV = BASE_DIR / "test_data/students.csv"
 
 def seed_from_csv():
     conn = sqlite3.connect(DB_PATH)
