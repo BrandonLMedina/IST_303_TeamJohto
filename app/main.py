@@ -1,0 +1,98 @@
+from flask import Flask, render_template, redirect, url_for, request, flash, session
+import sqlite3
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your secret key34165421654521'
+
+user_contact = {}
+# Redirect users to login if not authenticated
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'static']
+    if request.endpoint not in allowed_routes and not session.get('logged_in'):
+        return redirect(url_for('login'))
+
+
+# Home route redirects to dashboard
+@app.route('/')
+def index():
+    return redirect(url_for('dashboard'))
+
+
+# Login page (simple admin:admin)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Invalid Credentials. Please try again.'
+        else:
+            session['logged_in'] = True
+            flash('Login successful!')
+            return redirect(url_for('dashboard'))
+    return render_template('login.html', error=error)
+
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You were logged out!')
+    return redirect(url_for('login'))
+    
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # Get the first (and only) row from profile table
+    cursor.execute('SELECT about_me FROM profile WHERE id = 1')
+    row = cursor.fetchone()
+
+    about_me = row['about_me'] if row else ''
+
+    if request.method == 'POST':
+        new_about = request.form.get('about_me', '')
+
+        # Update existing record
+        cursor.execute('UPDATE profile SET about_me = ? WHERE id = 1', (new_about,))
+        conn.commit()
+        conn.close()
+
+        flash('Profile updated successfully!')
+        return redirect(url_for('profile'))
+
+    conn.close()
+    return render_template('profile.html', about_me=about_me)
+
+
+@app.route('/contacts', methods=['GET', 'POST'])
+def contacts():
+    global user_contact
+    if request.method == 'POST':
+        phone = request.form.get('phone')
+        email = request.form.get('email')
+        linkedin = request.form.get('linkedin')
+        github = request.form.get('github')
+
+        # store the submitted info
+        user_contact = {
+            'phone': phone,
+            'email': email,
+            'linkedin': linkedin,
+            'github': github
+        }
+        flash('Contact information saved successfully!')
+        return redirect(url_for('contacts'))
+
+    return render_template('contacts.html', contact_info=user_contact)    
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="cgu-title">Profile</h1>
+
+<div class="profile-section">
+
+  <!-- Display About Me -->
+  <div id="about-display">
+    <h2>About Me</h2>
+    <p>{{ about_me }}</p>
+    <button class="btn edit-btn" onclick="toggleEdit()">✏️ Edit</button>
+  </div>
+
+  <!-- Hidden form for editing -->
+  <form id="edit-form" method="POST" style="display: none;">
+    <textarea name="about_me" rows="5" class="form-control" placeholder="Write something about yourself...">{{ about_me }}</textarea>
+    <div class="form-actions">
+      <button type="submit" class="btn save-btn">Save</button>
+      <button type="button" class="btn cancel-btn" onclick="toggleEdit()">Cancel</button>
+    </div>
+  </form>
+
+</div>
+
+<a href="{{ url_for('dashboard') }}" class="btn back-btn">← Back to Dashboard</a>
+
+<!-- Small JavaScript to toggle edit mode -->
+<script>
+  function toggleEdit() {
+    const display = document.getElementById('about-display');
+    const form = document.getElementById('edit-form');
+    const isHidden = form.style.display === 'none';
+    form.style.display = isHidden ? 'block' : 'none';
+    display.style.display = isHidden ? 'none' : 'block';
+  }
+</script>
+{% endblock %}

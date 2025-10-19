@@ -1,0 +1,212 @@
+/* === Google Fonts & Headers === */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Crimson+Text:wght@600&display=swap');
+
+body {
+  background-color: #f8f9fa;
+  margin: 0;
+  font-family: 'Crimson Text', serif;
+}
+
+/* === Page Title === */
+.cgu-title {
+  font-family: 'Playfair Display', 'Crimson Text', serif;
+  font-weight: 700;
+  color: #a50f15;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 15px 0;
+}
+
+/* === Navbar === */
+.navbar {
+  background-color: #a50f15 !important;
+  border-bottom: 3px solid #7f0b10;
+}
+
+.navbar-brand {
+  color: #fff !important;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.5em;
+  letter-spacing: 1px;
+}
+
+.navbar-nav .nav-link {
+  color: #fff !important;
+  font-weight: 500;
+  margin-right: 15px;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffd7d7 !important;
+  text-decoration: underline;
+}
+
+.navbar-nav .nav-link.active {
+  font-weight: 700;
+  border-bottom: 2px solid #fff;
+}
+
+/* === Dashboard Layout (3x2 Responsive Grid) === */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 992px) {
+  .dashboard-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Card Styling === */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+  padding: 20px;
+  overflow: visible;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 10px;
+  font-weight: bold;
+  color: #fff;
+  background: #a50f15;
+  border-radius: 8px 8px 0 0;
+  text-align: center;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* === Typography inside cards === */
+.big-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #a50f15;
+}
+
+.stat-card p {
+  font-size: 14px;
+  color: #444;
+}
+
+/* === Buttons (CGU Red & White Theme) === */
+.btn,
+button,
+.logout-btn {
+  background-color: #a50f15;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  margin: 3px;
+}
+
+.btn:hover,
+button:hover,
+.logout-btn:hover {
+  background-color: #7f0b10;
+}
+
+.btn-white {
+  background-color: #fff;
+  color: #a50f15;
+  border: 2px solid #a50f15;
+}
+
+.btn-white:hover {
+  background-color: #a50f15;
+  color: #fff;
+}
+
+.logout-btn {
+  background-color: #d32f2f;
+}
+
+.logout-btn:hover {
+  background-color: #b71c1c;
+}
+
+/* === Profile Card === */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 20px;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 3px solid #a50f15;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* === Profile & Contact Pages === */
+.profile-section,
+.contact-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  margin: 20px auto;
+  text-align: left;
+}
+
+/* === Donut Chart Size Adjustment === */
+#progressChart {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;   /* half the original size */
+  max-height: 200px;  /* ensures proportional scaling */
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
