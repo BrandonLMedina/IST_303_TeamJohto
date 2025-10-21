@@ -1,7 +1,14 @@
+import os
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 import sqlite3
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+app = Flask(
+    __name__, 
+     template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.config['SECRET_KEY'] = 'your secret key34165421654521'
 
 user_contact = {}
