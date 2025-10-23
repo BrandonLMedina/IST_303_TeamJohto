@@ -1,0 +1,16 @@
+﻿job_location_id,city,state,country,region,postal_code,organization_name,remote_option,latitude,longitude,created_at,updated_at
+1,Cupertino,California,United States,West Coast,95014,Apple Inc.,1,37.3349,-122.009,10/22/25 0:00,10/22/25 0:00
+2,Redmond,Washington,United States,West Coast,98052,Microsoft Corporation,1,47.674,-122.1215,10/22/25 0:00,10/22/25 0:00
+3,Seattle,Washington,United States,West Coast,98109,"Amazon.com, Inc.",1,47.6062,-122.3321,10/22/25 0:00,10/22/25 0:00
+4,Mountain View,California,United States,West Coast,94043,Alphabet Inc. (Google),1,37.3861,-122.0839,10/22/25 0:00,10/22/25 0:00
+5,Palo Alto,California,United States,West Coast,94304,Hewlett Packard Enterprise (HPE),1,37.4419,-122.143,10/22/25 0:00,10/22/25 0:00
+6,San Jose,California,United States,West Coast,95134,"Cisco Systems, Inc.",1,37.3382,-121.8863,10/22/25 0:00,10/22/25 0:00
+7,Round Rock,Texas,United States,South,78682,Dell Technologies Inc.,1,30.5083,-97.6789,10/22/25 0:00,10/22/25 0:00
+8,Austin,Texas,United States,South,73301,Oracle Corporation,1,30.2672,-97.7431,10/22/25 0:00,10/22/25 0:00
+9,Santa Clara,California,United States,West Coast,95054,Intel Corporation,1,37.3541,-121.9552,10/22/25 0:00,10/22/25 0:00
+10,Armonk,New York,United States,East Coast,10504,IBM Corporation,1,41.1268,-73.7146,10/22/25 0:00,10/22/25 0:00
+11,Menlo Park,California,United States,West Coast,94025,"Meta Platforms, Inc. (Facebook)",1,37.45296,-122.18173,10/22/25 0:00,10/22/25 0:00
+12,San Jose,California,United States,West Coast,95110,Adobe Inc.,1,37.3317,-121.8937,10/22/25 0:00,10/22/25 0:00
+13,Bentonville,Arkansas,United States,South,72712,Walmart Global Tech,1,36.3729,-94.2088,10/22/25 0:00,10/22/25 0:00
+14,San Francisco,California,United States,West Coast,94105,"Salesforce, Inc.",1,37.7749,-122.4194,10/22/25 0:00,10/22/25 0:00
+15,Sunnyvale,California,United States,West Coast,94089,NVIDIA Corporation,1,37.3688,-122.0363,10/22/25 0:00,10/22/25 0:00

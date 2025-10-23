@@ -53,7 +53,7 @@ CREATE TABLE alumni (
 -- Stores information about current students, career interests, and mentorship needs
 -- ============================================================
 
-CREATE TABLE students (
+CREATE TABLE student (
     student_id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
@@ -100,6 +100,8 @@ CREATE TABLE user_classes (
     status TEXT 
         CHECK(status IN ('enrolled', 'completed', 'dropped', 'auditing')) 
         DEFAULT 'enrolled',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (class_id) REFERENCES classes(class_id)
         ON UPDATE CASCADE ON DELETE CASCADE
@@ -139,8 +141,8 @@ CREATE TABLE degree_concentrations (
     department TEXT,                                 -- e.g., "Center for IS&T"
     description TEXT,
     degree_level TEXT 
-        CHECK(degree_level IN ('Bachelors', 'Masters', 'PhD', 'Certificate')) 
-        DEFAULT 'Masters',
+    CHECK(degree_level IN ('Bachelors', 'Masters', 'PhD', 'Certificate', 'Professional Doctorate')) 
+    DEFAULT 'Masters',
     active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

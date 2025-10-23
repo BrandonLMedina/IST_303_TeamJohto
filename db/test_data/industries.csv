@@ -1,0 +1,11 @@
+﻿industry_id,industry_name,sub_industry,description,sector_code,active,created_at,updated_at,updated_at
+1,Information Technology,Software Development,"Focused on software engineering, IT services, and digital solutions across industries.",IT-001,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+2,Data Science & Analytics,Business Intelligence,"Involves data engineering, visualization, and predictive analytics for business optimization.",DS-002,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+3,Cybersecurity,Network Security,"Focused on protecting information assets, digital infrastructure, and enterprise systems.",CY-003,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+4,Geographic Information Systems,Spatial Analytics,"Covers mapping, geospatial data analysis, and location intelligence services.",GIS-004,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+5,Healthcare Information Technology,Health Informatics,"Combines healthcare systems, EHRs, and analytics for patient-care improvement.",HC-005,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+6,Education Technology,Learning Systems,"Develops digital learning tools, LMS platforms, and instructional design systems.",ED-006,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+7,Management Consulting,Technology Strategy,"Advises organizations on IT strategy, innovation, and digital transformation.",MC-007,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+8,Artificial Intelligence,Automation & Robotics,"Applies AI models, robotics, and intelligent automation in business processes.",AI-008,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+9,Financial Technology,Banking Analytics,"Provides IT and data-driven solutions for banking, payments, and fintech startups.",FIN-009,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00
+10,Public Sector & Government,Smart Infrastructure,"Focuses on IT modernization, cybersecurity, and data governance for public services.",GOV-010,1,10/22/25 0:00,10/22/25 0:00,10/22/25 0:00

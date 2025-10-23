@@ -1,0 +1,11 @@
+﻿user_class_id,user_type,user_id,class_id,enrollment_date,completion_date,grade,status,created_at,updated_at
+1,student,1,1,9/1/25,,In Progress,enrolled,10/22/25 0:00,10/22/25 0:00
+2,student,1,4,9/1/25,,In Progress,enrolled,10/22/25 0:00,10/22/25 0:00
+3,student,2,5,1/15/25,5/15/25,A,completed,10/22/25 0:00,10/22/25 0:00
+4,student,3,7,8/30/25,,In Progress,enrolled,10/22/25 0:00,10/22/25 0:00
+5,student,4,8,9/2/25,,In Progress,enrolled,10/22/25 0:00,10/22/25 0:00
+6,student,5,9,8/25/24,12/10/24,A-,completed,10/22/25 0:00,10/22/25 0:00
+7,alumni,1,1,9/1/17,12/15/17,A,completed,10/22/25 0:00,10/22/25 0:00
+8,alumni,2,5,9/1/16,1/15/17,A-,completed,10/22/25 0:00,10/22/25 0:00
+9,alumni,3,8,9/1/18,1/15/19,B+,completed,10/22/25 0:00,10/22/25 0:00
+10,alumni,4,9,9/1/19,1/15/20,A,completed,10/22/25 0:00,10/22/25 0:00

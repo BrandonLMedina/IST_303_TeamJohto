@@ -3,45 +3,58 @@ import csv
 from pathlib import Path
 
 # Paths
-BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR.parent / "instance" / "database.db"
-ALUMNI_CSV = BASE_DIR / "test_data/alumni.csv"
-STUDENTS_CSV = BASE_DIR / "test_data/students.csv"
+BASE_DIR = Path(__file__).resolve().parent # /db
+PROJECT_ROOT = BASE_DIR.parent  # project root
+DB_PATH = BASE_DIR.parent / "instance" / "database.db" # /instance/database.db
+DATA_DIR = BASE_DIR / "test_data" # /db/test_data
 
-def seed_from_csv():
+TABLES = {
+    "degree_concentrations": DATA_DIR / "degree_concentrations.csv",
+    "industries": DATA_DIR / "industries.csv",
+    "job_locations": DATA_DIR / "job_locations.csv",
+    "classes": DATA_DIR / "classes.csv",
+    "alumni": DATA_DIR / "alumni.csv",
+    "students": DATA_DIR / "students.csv",
+    "user_classes": DATA_DIR / "user_classes.csv",
+}
+
+# Seed Table Function
+def seed_table(cursor, table_name, csv_path):
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        columns = reader.fieldnames
+        placeholders = ", ".join(["?"] * len(columns))
+        column_list = ", ".join(columns)
+        query = f"INSERT INTO {table_name} ({column_list}) VALUES ({placeholders})"
+        for row in reader:
+            cursor.execute(query, [row[col] for col in columns])
+
+# Seed All Tables
+def seed_all():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    # Alumni
-    with open(ALUMNI_CSV, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            cur.execute("""
-                INSERT INTO alumni 
-                (first_name, last_name, graduation_year, degree, major, concentration, email, phone, industry, company, position, linkedin_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                row["first_name"], row["last_name"], row["graduation_year"], row["degree"],
-                row["major"], row["concentration"], row["email"], row["phone"],
-                row["industry"], row["company"], row["position"], row["linkedin_url"]
-            ))
+    # Maintain order due to foreign key dependencies
+    ordered_tables = [
+        "degree_concentrations",
+        "industries",
+        "job_locations",
+        "classes",
+        "alumni",
+        "students",
+        "user_classes",
+    ]
 
-    # Students
-    with open(STUDENTS_CSV, newline='', encoding='utf-8') as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            cur.execute("""
-                INSERT INTO students 
-                (first_name, last_name, enrollment_year, expected_graduation_year, degree, major, concentration, email, phone, linkedin_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                row["first_name"], row["last_name"], row["enrollment_year"], row["expected_graduation_year"],
-                row["degree"], row["major"], row["concentration"], row["email"], row["phone"], row["linkedin_url"]
-            ))
+    for table in ordered_tables:
+        csv_path = TABLES.get(table)
+        if not csv_path.exists():
+            print(f"Skipping {table}: CSV not found at {csv_path}")
+            continue
+        seed_table(cur, table, csv_path)
 
     conn.commit()
     conn.close()
-    print("✅ Database seeded with alumni & students")
+    print("✅ Database seeding complete.")
 
 if __name__ == "__main__":
-    seed_from_csv()
+    seed_all()
