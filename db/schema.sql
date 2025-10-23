@@ -5,7 +5,7 @@
 -- Drop tables in dependency order (junctions first)
 DROP TABLE IF EXISTS user_classes;
 DROP TABLE IF EXISTS alumni;
-DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS student;
 DROP TABLE IF EXISTS classes;
 DROP TABLE IF EXISTS degree_concentrations;
 DROP TABLE IF EXISTS industries;

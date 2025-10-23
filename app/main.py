@@ -2,7 +2,10 @@ import os
 from flask import Flask, render_template, redirect, url_for, request, flash, session
 import sqlite3
 
+
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+DB_PATH = os.path.join(BASE_DIR, 'instance', 'database.db')
+
 
 app = Flask(
     __name__, 
@@ -10,6 +13,14 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'static')
 )
 app.config['SECRET_KEY'] = 'your secret key34165421654521'
+
+
+def get_db_connection():
+    """Create a database connection."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
 
 user_contact = {}
 # Redirect users to login if not authenticated
@@ -31,12 +42,36 @@ def index():
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Invalid Credentials. Please try again.'
+        email = request.form['username'].strip()
+        password = request.form['password'].strip()
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # Find user in either Student or Alumni table
+        cur.execute("""
+            SELECT 'student' AS user_type, student_id AS id, first_name, email, password_hash 
+            FROM student WHERE email = ?
+            UNION ALL
+            SELECT 'alumni' AS user_type, alumni_id AS id, first_name, email, password_hash 
+            FROM alumni WHERE email = ?
+        """, (email, email))
+        user = cur.fetchone()
+        conn.close()
+
+        # Validate credentials
+        if not user:
+            error = 'Email not found. Please try again.'
+        elif password != user['password_hash']:
+            error = 'Invalid password. Please try again.'
         else:
             session['logged_in'] = True
-            flash('Login successful!')
+            session['user_id'] = user['id']
+            session['user_type'] = user['user_type']
+            session['email'] = user['email']
+            flash(f"Welcome back, {user['first_name']}!")
             return redirect(url_for('dashboard'))
+
     return render_template('login.html', error=error)
 
 

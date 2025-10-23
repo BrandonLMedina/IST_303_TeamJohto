@@ -14,7 +14,7 @@ TABLES = {
     "job_locations": DATA_DIR / "job_locations.csv",
     "classes": DATA_DIR / "classes.csv",
     "alumni": DATA_DIR / "alumni.csv",
-    "students": DATA_DIR / "students.csv",
+    "student": DATA_DIR / "student.csv",
     "user_classes": DATA_DIR / "user_classes.csv",
 }
 
@@ -41,7 +41,7 @@ def seed_all():
         "job_locations",
         "classes",
         "alumni",
-        "students",
+        "student",
         "user_classes",
     ]
 
