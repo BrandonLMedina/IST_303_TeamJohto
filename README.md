@@ -59,9 +59,9 @@ Project Timeline
 
 - Part A (Ideation & Planning): Due 9/11
 
-- [Part B (Design & Implementation Start): Due 10/2](docs/Assignment%20Docs/Part%20B.md)  
-  Part B (Design & Implementation Start): Due 10/2
-  Team JOHTO Project: Part B - Alumni Network AI Dashboard
+- [Part B (Design & Implementation Start): Due 10/2](docs/Assignment%20Docs/Part%20B.md)
+
+- [Part C: Presentation](docs/Assignment Docs)
 
 1. Decompose User Stories into Tasks
    -User Story 1: Alumni (Brandon Medina Assigned)
