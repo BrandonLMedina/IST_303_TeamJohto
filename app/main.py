@@ -1,6 +1,12 @@
 import os
-from flask import Flask, render_template, redirect, url_for, request, flash, session
+from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
 import sqlite3
+import pandas as pd
+from openai import OpenAI
+import json
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # --------------------------------------------------------------
 # PATHS & CONFIG
@@ -15,6 +21,112 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'static')
 )
 app.config['SECRET_KEY'] = 'your secret key34165421654521'
+
+
+client = OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
+career_csv_path = os.path.join(BASE_DIR, 'db', 'test_data', 'industries.csv')
+career_df = pd.read_csv(career_csv_path)
+
+def get_industry_by_id(industry_id: int):
+    # Make sure industry_id is int
+    industry_id = int(industry_id)
+
+    # Use the correct column name from your CSV
+    row = career_df[career_df["industry_id"] == industry_id]
+
+    if row.empty:
+        return None
+
+    row = row.iloc[0]
+
+    return {
+        "industry_id": row["industry_id"],
+        "industry_name": row["industry_name"],
+        "sub_industry": row["sub_industry"],
+        "description": row["description"]
+    }
+
+
+##openai search
+@app.route("/api/job-opportunities", methods=["POST"])
+def job_opportunities():
+    data = request.get_json() or {}
+    print("🔍 Incoming JSON:", data)
+
+    industry_id = data.get("industry_id")
+    industry_name = data.get("industry_name")
+
+    if industry_id is not None:
+        industry = get_industry_by_id(int(industry_id))
+    elif industry_name:
+        industry = get_industry_by_industry(industry_name)
+    else:
+        return jsonify({"error": "industry_id or industry_name is required"}), 400
+
+    if industry is None:
+        return jsonify({"error": "industry not found"}), 404
+
+    print("🔍 Industry found:", industry)
+
+    industry_name_val = industry["industry_name"]
+    sub_industry = industry["sub_industry"]
+    description = industry["description"]
+
+    prompt = f"""
+You are a career advisor and job search assistant.
+
+Career pathway from database:
+- Industry: {industry_name_val}
+- Sub-industry: {sub_industry}
+- Description: {description}
+
+1. Propose 1-5 specific job titles that would be a strong match.
+2. For each, generate:
+   - job_title
+   - short_summary (1–2 sentences)
+   - suggested_search_query (what the user should type into a job site like LinkedIn, Indeed, etc.)
+   - recommended_keywords (comma-separated list)
+   - typical_locations (short text, e.g. "Remote or major tech hubs")
+
+Return ONLY a valid JSON list of objects, like:
+[
+  {{
+    "job_title": "...",
+    "short_summary": "...",
+    "suggested_search_query": "...",
+    "recommended_keywords": "...",
+    "typical_locations": "..."
+  }},
+  ...
+]
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4,
+        )
+    except Exception as e:
+        print("❌ OpenAI error:", repr(e))
+        return jsonify({"error": f"OpenAI error: {str(e)}"}), 500
+
+    content = response.choices[0].message.content
+    print("🔍 Raw OpenAI content:", content[:400], " ...")
+
+    try:
+        jobs = json.loads(content)
+    except json.JSONDecodeError as e:
+        print("❌ JSON decode error:", e)
+        return jsonify({
+            "error": "AI response was not valid JSON",
+            "raw": content
+        }), 500
+
+    return jsonify({"jobs": jobs})
+
+
+
 
 # --------------------------------------------------------------
 # DB CONNECTION
