@@ -145,7 +145,7 @@
       </div>
     </div>
 
-    <!-- Networking Opportunities -->
+    <!-- Networking Opportunities 
     <div class="col-lg-4">
       <div class="card stat-card">
         <div class="card-header">Networking Opportunities</div>
@@ -156,7 +156,29 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
+  
+  
+    <!-- Networking Opportunities -->
+	<div class="col-lg-4">
+	  <div class="card stat-card">
+        <div class="card-header">Job Opportunities</div>
+        <div class="card-body">
+
+        <!-- Button -->
+        <button id="btn-jobs" class="btn btn-primary mb-3">
+			Find Job Opportunities
+        </button>
+
+        <!-- Where AI Results Will Show -->
+        <div id="jobs-results">
+        </div>
+
+        </div>
+      </div>
+    </div>
+
+  
   <!-- END Row 3 -->
 </div>
 <!-- END dashboard-container -->
@@ -194,4 +216,78 @@
   });
 </script>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ DOMContentLoaded fired");
+
+  const btn = document.getElementById("btn-jobs");
+  const resultsDiv = document.getElementById("jobs-results");
+
+  console.log("btn:", btn);
+  console.log("resultsDiv:", resultsDiv);
+
+  if (!btn || !resultsDiv) {
+    console.error("❌ Button or results div not found");
+    return;
+  }
+
+  btn.addEventListener("click", async () => {
+    console.log("✅ Button clicked");
+    resultsDiv.innerHTML = "<p>Loading job opportunities...</p>";
+
+    try {
+      const res = await fetch("/api/job-opportunities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          industry_id: 1  // TODO: replace with the real id from your dashboard
+          // or { industry_name: "Telecommunications" }
+        })
+      });
+
+      const text = await res.text();
+      console.log("Status:", res.status);
+      console.log("Raw body:", text);
+
+      if (!res.ok) {
+        resultsDiv.innerHTML = `<p>Server error (${res.status})</p>`;
+        return;
+      }
+
+      const data = JSON.parse(text);
+
+      if (data.error) {
+        resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = "";
+      data.jobs.forEach(job => {
+        const div = document.createElement("div");
+        div.className = "p-2 mb-2 border rounded";
+        div.innerHTML = `
+          <strong>${job.job_title}</strong><br>
+          <p>${job.short_summary}</p>
+          <p><strong>Search query:</strong> ${job.suggested_search_query}</p>
+          <p><strong>Keywords:</strong> ${job.recommended_keywords}</p>
+          <p><strong>Typical locations:</strong> ${job.typical_locations}</p>
+        `;
+        resultsDiv.appendChild(div);
+      });
+
+    } catch (err) {
+      console.error("❌ Fetch/parse error:", err);
+      resultsDiv.innerHTML = "<p>Failed to load job opportunities.</p>";
+    }
+  });
+});
+</script>
+
+
 {% endblock %}
+
+
+
+
+
