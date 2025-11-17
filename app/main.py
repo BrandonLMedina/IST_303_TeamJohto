@@ -26,7 +26,7 @@ user_contact = {}
 # Redirect users to login if not authenticated
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'static']
+    allowed_routes = ['index', 'register', 'login', 'static']
     if request.endpoint not in allowed_routes and not session.get('logged_in'):
         return redirect(url_for('login'))
 
@@ -34,10 +34,9 @@ def require_login():
 # Home route redirects to dashboard
 @app.route('/')
 def index():
-    return redirect(url_for('dashboard'))
+    return render_template('index.html')
 
 
-# Login page (simple admin:admin)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -133,6 +132,11 @@ def contacts():
         return redirect(url_for('contacts'))
 
     return render_template('contacts.html', contact_info=user_contact)    
+
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 
 
