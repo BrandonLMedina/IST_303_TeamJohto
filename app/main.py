@@ -87,7 +87,7 @@ def logout():
     
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    conn = sqlite3.connect('database.db')
+    conn = get_db_connection()
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
