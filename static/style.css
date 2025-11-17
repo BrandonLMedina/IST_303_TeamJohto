@@ -1,15 +1,99 @@
+/* ============================================================
+   ROOT VARIABLES — Unified Color System
+   (Safe additions, no overrides yet)
+   ============================================================ */
+:root {
+  /* True CGU color system */
+  --cgu-red: #a50f15;
+  --cgu-red-dark: #7f0b10;
+  --cgu-red-light: #ffd7d7;
+
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Text contrast variables */
+  --text-on-dark: #ffffff;
+  --text-on-light: #1a1a1a;
+}
+
+/* ============================================================
+   GLASS UI COMPONENTS (Design)
+   Fully compatible — no overrides of true classes
+   ============================================================ */
+
+.glass-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 20px;
+  color: var(--text-on-dark);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.glass-alert {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.38);
+  color: var(--text-on-dark);
+  border: 0;
+}
+
+.glass-hr {
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+}
+/* ============================================================
+   GLOW BUTTONS & PASSWORD TOGGLE BUTTON (Design)
+   Safe additions — do NOT override your true .btn styles
+   ============================================================ */
+
+/* Glow effect applicable only to elements with .glow-btn */
+.glow-btn {
+  transition: box-shadow 0.25s ease, transform 0.1s ease;
+}
+
+.glow-btn:hover {
+  box-shadow: 0 8px 28px rgba(165, 15, 21, 0.4); /* CGU red tone */
+  transform: translateY(-1px);
+}
+
+/* Password eye / toggle button */
+.btn-outline-secondary {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  color: var(--white);
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   LINK STYLING FOR GLASS + DARK BACKGROUNDS
+   Only applies when class="link-light"
+   ============================================================ */
+
+a.link-light {
+  color: var(--white);
+  text-decoration: underline;
+}
+
+a.link-light:hover {
+  color: var(--cgu-red-light);
+}
+
 /* === Google Fonts & Headers === */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Crimson+Text:wght@600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Crimson+Text:wght@600&display=swap");
 
 body {
   background-color: #f8f9fa;
   margin: 0;
-  font-family: 'Crimson Text', serif;
+  font-family: "Crimson Text", serif;
 }
 
 /* === Page Title === */
 .cgu-title {
-  font-family: 'Playfair Display', 'Crimson Text', serif;
+  font-family: "Playfair Display", "Crimson Text", serif;
   font-weight: 700;
   color: #a50f15;
   text-transform: uppercase;
@@ -26,7 +110,7 @@ body {
 
 .navbar-brand {
   color: #fff !important;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-weight: 700;
   font-size: 1.5em;
   letter-spacing: 1px;
@@ -51,12 +135,13 @@ body {
 
 /* === Dashboard Layout (3x2 Responsive Grid) === */
 .dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
   max-width: 1100px;
   margin: 40px auto;
   padding: 0 20px;
+}
+
+.dashboard-container .card-body {
+  color: #222;
 }
 
 @media (max-width: 992px) {
@@ -198,15 +283,23 @@ button:hover,
 #progressChart {
   display: block;
   margin: 0 auto;
-  max-width: 200px;   /* half the original size */
-  max-height: 200px;  /* ensures proportional scaling */
+  max-width: 200px; /* half the original size */
+  max-height: 200px; /* ensures proportional scaling */
 }
 
-.dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+.dot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background-color: var(--cgu-red);
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.card.profile-card {
+  background: #fff; /* match other cards */
+  padding: 20px; /* restore spacing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

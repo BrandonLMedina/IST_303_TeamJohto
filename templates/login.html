@@ -1,21 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>Login</title>
-  </head>
-  <body>
-    <h1>Login Page</h1>
-    {% if error %}
-    <p style="color: red">{{ error }}</p>
-    {% endif %}
-    <form method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" /><br /><br />
+{% extends 'base.html' %} {% block title %}Login{% endblock %} {% block content
+%}
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="glass-card p-4 p-md-5">
+      <h2 class="mb-3 fw-bold text-center" style="color: var(--cgu-red)">
+        Welcome to CGU Alumni Network
+      </h2>
+      <p class="text-center text-muted mb-4">Log in to continue</p>
+      {% if error %}
+      <div class="alert alert-danger glass-alert">{{ error }}</div>
+      {% endif %}
+      <form method="post" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input
+            name="username"
+            class="form-control form-control-lg"
+            placeholder="Your email"
+            required />
+        </div>
+        <div class="mb-3 position-relative">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <input
+              id="pwd"
+              name="password"
+              type="password"
+              class="form-control form-control-lg"
+              placeholder="Your Password"
+              required />
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              id="eye"
+              onclick="togglePwd('pwd','eye')">
+              👁️
+            </button>
+          </div>
+        </div>
 
-      <label for="password">Password:</label>
-      <input type="password" name="password" /><br /><br />
+        <button class="btn btn-primary btn-lg w-100 mb-3 glow-btn">
+          Log In
+        </button>
+      </form>
 
-      <button type="submit">Login</button>
-    </form>
-  </body>
-</html>
+      <div class="text-center">
+        <small class="text-muted">
+          Don't have an account? Contact your program administrator.
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,118 +1,147 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-{% block content %}
-<h1 class="cgu-title">CGU Alumni Network Dashboard</h1>
+<h2 class="fw-bold text-center mb-4" style="color: var(--cgu-red)">
+  CGU Alumni Network Dashboard
+</h2>
 
 <div class="dashboard-container">
 
-  <!-- Profile / Academic Info -->
-  <div class="card profile-card">
-    <div class="card-body profile-info">
-      <img src="{{ url_for('static', filename='profile_placeholder.png') }}" alt="Profile" class="profile-pic">
-      <h3>Alex Corona</h3>
-      <p>ID: 24000000112398</p>
-      <p>Program: Information Systems Technology</p>
-      <p>Concentration: AI-Driven Innovation</p>
-      <p>Advisor: Dr. David Kallemeyn</p>
-      <p>Student Since: August 25, 2025</p>
-      <p>Graduated: —</p>
-      <div class="profile-actions">
-        <a href="{{ url_for('profile') }}" class="btn">View Profile</a>
-        <a href="{{ url_for('contacts') }}" class="btn">Contacts</a>
+  <!-- Row 1: Profile full-width -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card profile-card">
+        <img
+          src="{{ url_for('static', filename='profile_placeholder.png') }}"
+          alt="Profile"
+          class="profile-pic" />
+
+        <h3>Alex Corona</h3>
+        <p>ID: 24000000112398</p>
+        <p>Program: Information Systems Technology</p>
+        <p>Concentration: AI-Driven Innovation</p>
+        <p>Advisor: Dr. David Kallemeyn</p>
+        <p>Student Since: August 25, 2025</p>
+        <p>Graduated: —</p>
+       <div class="profile-actions">
+          <a href="{{ url_for('profile') }}" class="btn">View Profile</a>
+          <a href="{{ url_for('contacts') }}" class="btn">Contacts</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!--Row 2: Two Tiles-->
+  <div class="row g-4 mb-4">
+
+      <!-- Academic Progress -->
+    <div class="col-lg-6">
+      <div class="card stat-card">
+        <div class="card-header">Academic Progress</div>
+        <div class="card-body">
+          <canvas id="progressChart"></canvas>
+          <p style="margin-top: 10px">Classes Completed vs Remaining</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Preferences -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">Location Preferences</div>
+        <div class="card-body">
+          <p><strong>Current Location:</strong> Los Angeles, CA</p>
+          <p><strong>Preferred Work Areas:</strong></p>
+          <ul class="location-list">
+            <li>Southern California</li>
+            <li>Remote (Nationwide)</li>
+            <li>Bay Area (Flexible Radius)</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Academic Progress -->
-  <div class="card stat-card">
-    <div class="card-header">Academic Progress</div>
-    <div class="card-body">
-      <canvas id="progressChart"></canvas>
-      <p style="margin-top: 10px;">Classes Completed vs Remaining</p>
+  <!-- Row 3: Three tiles -->
+  <div class="row g-4">
+
+      <!-- Career Pathway -->
+    <div class="col-lg-4">
+      <div class="card stat-card">
+        <div class="card-header">Career Pathways</div>
+        <div class="card-body">
+          <p><strong>Company:</strong> CGU</p>
+          <p><strong>Role:</strong> System Engineer</p>
+          <p><strong>Start:</strong> 2022 - Present</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Location Preferences -->
-  <div class="card">
-    <div class="card-header">Location Preferences</div>
-    <div class="card-body">
-      <p><strong>Current Location:</strong> Los Angeles, CA</p>
-      <p><strong>Preferred Work Areas:</strong></p>
-      <ul class="location-list">
-        <li>Southern California</li>
-        <li>Remote (Nationwide)</li>
-        <li>Bay Area (Flexible Radius)</li>
-      </ul>
+    <!-- Mentors -->
+    <div class="col-lg-4">
+      <div class="card stat-card">
+        <div class="card-header">Seeking Mentors</div>
+        <div class="card-body">
+          <p><strong>Seeking Mentor:</strong> Yes</p>
+          <p><strong>Possible Mentors:</strong> 3</p>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Career Pathway -->
-  <div class="card stat-card">
-    <div class="card-header">Career Pathways</div>
-    <div class="card-body">
-      <p><strong>Company:</strong> CGU</p>
-      <p><strong>Role:</strong> System Engineer</p>
-      <p><strong>Start:</strong> 2022 - Present</p>
+    <!-- Networking Opportunities -->
+    <div class="col-lg-4">
+      <div class="card stat-card">
+        <div class="card-header">Networking Opportunities</div>
+        <div class="card-body">
+          <ul class="scholar-list">
+            <li><span class="dot blue"></span> 50 Possible Opportunities</li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Mentors -->
-  <div class="card stat-card">
-    <div class="card-header">Seeking Mentors</div>
-    <div class="card-body">
-      <p><strong>Seeking Mentor:</strong> Yes</p>
-      <p><strong>Possible Mentors:</strong> 3</p>
     </div>
-  </div>
 
-  <!-- Networking Opportunities -->
-  <div class="card stat-card">
-    <div class="card-header">Networking Opportunities</div>
-    <div class="card-body">
-      <ul class="scholar-list">
-        <li><span class="dot blue"></span> 50 Possible Opportunities</li>
-      </ul>
+      <!-- === Chart.js === -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const completedClasses = 2;
+        const plannedClasses = 19;
+        const ctx = document.getElementById("progressChart").getContext("2d");
+        ctx.canvas.style.width = "200px";
+        ctx.canvas.style.height = "200px";
+        new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Completed", "Planned"],
+            datasets: [
+              {
+                data: [completedClasses, plannedClasses],
+                backgroundColor: ["#a50f15", "#f4b9b9"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            cutout: "70%",
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 15 },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `${context.label}: ${context.parsed}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      </script>
+      
     </div>
+    <!-- ✅ this closes dashboard-container -->
+    {% endblock %}
   </div>
-
-
-
-<!-- === Chart.js === -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const completedClasses = 2;
-  const plannedClasses = 19;
-
-  const ctx = document.getElementById('progressChart').getContext('2d');
-  ctx.canvas.style.width = '200px';
-  ctx.canvas.style.height = '200px';
-  new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Completed', 'Planned'],
-      datasets: [{
-        data: [completedClasses, plannedClasses],
-        backgroundColor: ['#a50f15', '#f4b9b9'],
-        borderWidth: 0
-      }]
-    },
-    options: {
-      cutout: '70%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { boxWidth: 15 }
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              return `${context.label}: ${context.parsed}`;
-            }
-          }
-        }
-      }
-    }
-  });
-</script>
-</div> <!-- ✅ this closes dashboard-container -->
-{% endblock %}
+</div>
