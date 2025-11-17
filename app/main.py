@@ -43,11 +43,12 @@ def index():
     return render_template('index.html')
 
 # --------------------------------------------------------------
-# LOGIN
+# LOGIN — unified users table
 # --------------------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
+
     if request.method == 'POST':
         email = request.form['username'].strip()
         password = request.form['password'].strip()
@@ -55,25 +56,21 @@ def login():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        # Find user in either Student or Alumni table
         cur.execute("""
-            SELECT 'student' AS user_type, student_id AS id, first_name, email, password_hash 
-            FROM student WHERE email = ?
-            UNION ALL
-            SELECT 'alumni' AS user_type, alumni_id AS id, first_name, email, password_hash 
-            FROM alumni WHERE email = ?
-        """, (email, email))
+            SELECT user_id, first_name, email, password_hash, user_type
+            FROM users
+            WHERE email = ?
+        """, (email,))
         user = cur.fetchone()
         conn.close()
 
-        # Validate credentials
         if not user:
-            error = 'Email not found. Please try again.'
-        elif password != user['password_hash']:
-            error = 'Invalid password. Please try again.'
+            error = "Email not found."
+        elif password != user['password_hash']:  # (Later upgrade to hashing)
+            error = "Invalid password."
         else:
             session['logged_in'] = True
-            session['user_id'] = user['id']
+            session['user_id'] = user['user_id']
             session['user_type'] = user['user_type']
             session['email'] = user['email']
             flash(f"Welcome back, {user['first_name']}!")
@@ -81,125 +78,214 @@ def login():
 
     return render_template('login.html', error=error)
 
+
 # --------------------------------------------------------------
-# DASHBOARD (DYNAMIC)
+# DASHBOARD (Unified — pulls student OR alumni fields dynamically)
 # --------------------------------------------------------------
 @app.route('/dashboard')
 def dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
 
-    user_type = session.get('user_type')
-    user_id = session.get('user_id')
+    user_id = session['user_id']
+    user_type = session['user_type']
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # -------------------------
-    # STUDENT QUERY
-    # -------------------------
-    if user_type == 'student':
-        cur.execute("""
-            SELECT
-                s.student_id AS id,
-                s.first_name,
-                s.last_name,
-                s.email,
-                s.current_year,
-                s.expected_graduation_year,
-                s.is_seeking_mentorship,
-                dc.degree_name,
-                dc.concentration_name,
-                ind.industry_name AS industry_name,
-                jl.city,
-                jl.state,
-                jl.region
-            FROM student s
-            LEFT JOIN degree_concentrations dc
-                ON s.degree_concentration_id = dc.degree_concentration_id
-            LEFT JOIN industries ind
-                ON s.desired_industry_id = ind.industry_id
-            LEFT JOIN job_locations jl
-                ON s.desired_job_location_id = jl.job_location_id
-            WHERE s.student_id = ?
-        """, (user_id,))
+    # IMPORTANT:
+    # Students get desired_* lookups
+    # Mentors get actual job_location_id & industry_id lookups
+    cur.execute("""
+        SELECT
+            u.user_id AS id,
+            u.user_type,
+            u.first_name,
+            u.last_name,
+            u.email,
+            u.phone_number,
 
-    # -------------------------
-    # ALUMNI QUERY
-    # -------------------------
-    else:
-        cur.execute("""
-            SELECT
-                a.alumni_id AS id,
-                a.first_name,
-                a.last_name,
-                a.email,
-                a.graduation_year,
-                a.is_mentor,
-                a.current_position,
-                a.company_name,
-                dc.degree_name,
-                dc.concentration_name,
-                ind.industry_name AS industry_name,
-                jl.city,
-                jl.state,
-                jl.region
-            FROM alumni a
-            LEFT JOIN degree_concentrations dc
-                ON a.degree_concentration_id = dc.degree_concentration_id
-            LEFT JOIN industries ind
-                ON a.industry_id = ind.industry_id
-            LEFT JOIN job_locations jl
-                ON a.job_location_id = jl.job_location_id
-            WHERE a.alumni_id = ?
-        """, (user_id,))
+            u.current_year,
+            u.expected_graduation_year,
+            u.graduation_year,
+            u.current_position,
+            u.company_name,
+
+            u.profile_visibility,
+            u.is_seeking_mentorship,
+            u.is_mentor,
+
+            dc.degree_level,
+            dc.degree_name,
+            dc.concentration_name,
+
+            ind.industry_name,
+            ind.sub_industry,
+            ind.sector_code,
+            ind.description AS industry_description,
+
+            jl.organization_name AS loc_org,
+            jl.city AS loc_city,
+            jl.state AS loc_state,
+            jl.country AS loc_country,
+            jl.region AS loc_region
+
+        FROM users u
+
+        LEFT JOIN degree_concentrations dc
+            ON u.degree_concentration_id = dc.degree_concentration_id
+
+        LEFT JOIN industries ind
+            ON ind.industry_id =
+                CASE
+                    WHEN u.user_type = 'student' THEN u.desired_industry_id
+                    ELSE u.industry_id
+                END
+
+        LEFT JOIN job_locations jl
+            ON jl.job_location_id =
+                CASE
+                    WHEN u.user_type = 'student' THEN u.desired_job_location_id
+                    ELSE u.job_location_id
+                END
+
+        WHERE u.user_id = ?
+    """, (user_id,))
 
     row = cur.fetchone()
     conn.close()
 
-    if row is None:
-        flash('Could not load your profile. Please contact an administrator.')
+    if not row:
+        flash("Could not load your dashboard.")
         return redirect(url_for('logout'))
 
-    row = dict(row)
+    dashboard = dict(row)
+    dashboard["full_name"] = f"{dashboard['first_name']} {dashboard['last_name']}"
 
-    # LOCATION STRING BUILDER
-    parts = []
-    if row.get('city'):
-        parts.append(row.get('city'))
-    if row.get('state'):
-        parts.append(row.get('state'))
+    return render_template("dashboard.html", dashboard=dashboard)
 
-    location_display = ', '.join(parts)
-    region = row.get('region')
-    if region:
-        location_display = f"{location_display} ({region})" if location_display else region
+# --------------------------------------------------------------
+# PROFILE — Display + Edit (with dropdown lists)
+# --------------------------------------------------------------
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
-    # FINAL DASHBOARD DATA
-    dashboard = {
-        'user_type': user_type,
-        'full_name': f"{row.get('first_name', '')} {row.get('last_name', '')}".strip(),
-        'id_label': 'Student ID' if user_type == 'student' else 'Alumni ID',
-        'id_value': row.get('id'),
-        'email': row.get('email'),
-        'program': row.get('degree_name'),
-        'concentration': row.get('concentration_name'),
-        'location_display': location_display or None,
-        'industry_name': row.get('industry_name'),
+    user_id = session['user_id']
+    user_type = session['user_type']
 
-        # Student-specific
-        'current_year': row.get('current_year') if user_type == 'student' else None,
-        'expected_graduation_year': row.get('expected_graduation_year') if user_type == 'student' else None,
-        'is_seeking_mentorship': bool(row.get('is_seeking_mentorship')) if user_type == 'student' else None,
+    conn = get_db_connection()
+    cur = conn.cursor()
 
-        # Alumni-specific
-        'graduation_year': row.get('graduation_year') if user_type == 'alumni' else None,
-        'is_mentor': bool(row.get('is_mentor')) if user_type == 'alumni' else None,
-        'company_name': row.get('company_name') if user_type == 'alumni' else None,
-        'current_position': row.get('current_position') if user_type == 'alumni' else None,
-    }
+    # MAIN unified SELECT
+    cur.execute("""
+        SELECT
+            u.*,
+            dc.degree_level,
+            dc.degree_name,
+            dc.concentration_name,
 
-    return render_template('dashboard.html', dashboard=dashboard)
+            ind.industry_name,
+            ind.sub_industry,
+            ind.sector_code,
+            ind.description AS industry_description,
+
+            jl.organization_name AS org_name,
+            jl.city AS city,
+            jl.state AS state,
+            jl.country AS country,
+            jl.region AS region
+
+        FROM users u
+
+        LEFT JOIN degree_concentrations dc
+            ON u.degree_concentration_id = dc.degree_concentration_id
+
+        LEFT JOIN industries ind
+            ON ind.industry_id =
+                CASE
+                    WHEN u.user_type = 'student' THEN u.desired_industry_id
+                    ELSE u.industry_id
+                END
+
+        LEFT JOIN job_locations jl
+            ON jl.job_location_id =
+                CASE
+                    WHEN u.user_type = 'student' THEN u.desired_job_location_id
+                    ELSE u.job_location_id
+                END
+
+        WHERE u.user_id = ?
+    """, (user_id,))
+
+    row = cur.fetchone()
+
+    if not row:
+        flash("Could not load your profile.")
+        return redirect(url_for("dashboard"))
+
+    profile = dict(row)
+
+    # ----------------------------------------------------------
+    # Fetch lists for dropdowns
+    # ----------------------------------------------------------
+    cur.execute("SELECT * FROM industries ORDER BY industry_name")
+    industries = cur.fetchall()
+
+    cur.execute("SELECT * FROM job_locations ORDER BY organization_name")
+    locations = cur.fetchall()
+
+    # ----------------------------------------------------------
+    # SAVE CHANGES
+    # ----------------------------------------------------------
+    if request.method == "POST":
+
+        updates = {
+            "phone_number": request.form.get("phone_number"),
+            "company_name": request.form.get("company_name"),
+            "current_position": request.form.get("current_position"),
+            "current_year": request.form.get("current_year"),
+            "expected_graduation_year": request.form.get("expected_graduation_year"),
+            "profile_visibility": request.form.get("profile_visibility"),
+        }
+
+        # Student vs Mentor fields
+        if user_type == "student":
+            updates["desired_job_location_id"] = request.form.get("job_location_id")
+            updates["desired_industry_id"] = request.form.get("industry_id")
+            updates["is_seeking_mentorship"] = request.form.get("is_seeking_mentorship")
+        else:
+            updates["job_location_id"] = request.form.get("job_location_id")
+            updates["industry_id"] = request.form.get("industry_id")
+            updates["is_mentor"] = request.form.get("is_mentor")
+
+        # Build update query
+        cols = ", ".join([f"{col} = ?" for col in updates])
+        vals = list(updates.values()) + [user_id]
+
+        cur.execute(f"UPDATE users SET {cols} WHERE user_id = ?", vals)
+        conn.commit()
+        conn.close()
+
+        flash("Profile updated successfully!")
+        return redirect(url_for("profile"))
+
+    conn.close()
+    return render_template(
+        "profile.html",
+        profile=profile,
+        user_type=user_type,
+        industries=industries,
+        locations=locations
+    )
+
+# --------------------------------------------------------------
+# REGISTER PAGE (UI ONLY for now)
+# --------------------------------------------------------------
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 # --------------------------------------------------------------
 # LOGOUT
@@ -209,67 +295,6 @@ def logout():
     session.clear()
     flash('You were logged out!')
     return redirect(url_for('login'))
-
-# --------------------------------------------------------------
-# PROFILE
-# --------------------------------------------------------------    
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
-    conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-
-    # Get the first (and only) row from profile table
-    cursor.execute('SELECT about_me FROM profile WHERE id = 1')
-    row = cursor.fetchone()
-
-    about_me = row['about_me'] if row else ''
-
-    if request.method == 'POST':
-        new_about = request.form.get('about_me', '')
-
-        # Update existing record
-        cursor.execute('UPDATE profile SET about_me = ? WHERE id = 1', (new_about,))
-        conn.commit()
-        conn.close()
-
-        flash('Profile updated successfully!')
-        return redirect(url_for('profile'))
-
-    conn.close()
-    return render_template('profile.html', about_me=about_me)
-
-# --------------------------------------------------------------
-# CONTACTS
-# --------------------------------------------------------------
-user_contact = {}
-@app.route('/contacts', methods=['GET', 'POST'])
-def contacts():
-    global user_contact
-    if request.method == 'POST':
-        phone = request.form.get('phone')
-        email = request.form.get('email')
-        linkedin = request.form.get('linkedin')
-        github = request.form.get('github')
-
-        # store the submitted info
-        user_contact = {
-            'phone': phone,
-            'email': email,
-            'linkedin': linkedin,
-            'github': github
-        }
-        flash('Contact information saved successfully!')
-        return redirect(url_for('contacts'))
-
-    return render_template('contacts.html', contact_info=user_contact)    
-
-# --------------------------------------------------------------
-# REGISTER PAGE (UI ONLY for now)
-# --------------------------------------------------------------
-@app.route('/register')
-def register():
-    return render_template('register.html')
 
 # --------------------------------------------------------------
 # RUN APP

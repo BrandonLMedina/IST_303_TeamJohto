@@ -5,7 +5,9 @@
 </h2>
 
 <div class="dashboard-container">
-  <!-- Row 1: Profile full-width -->
+  <!-- ============================================================
+       MAIN PANEL — Student + Mentor
+  ============================================================ -->
   <div class="row mb-4">
     <div class="col-12">
       <div class="card profile-card">
@@ -15,29 +17,43 @@
           class="profile-pic" />
 
         <h3>{{ dashboard.full_name }}</h3>
-        <p>{{ dashboard.id_label }}: {{ dashboard.id_value }}</p>
+        <p><strong>Email:</strong> {{ dashboard.email }}</p>
+        <p>
+          <strong>Phone:</strong> {{ dashboard.phone_number or 'Not provided' }}
+        </p>
 
-        {% if dashboard.program %}
-        <p>Program: {{ dashboard.program }}</p>
-        {% endif %} {% if dashboard.concentration %}
-        <p>Concentration: {{ dashboard.concentration }}</p>
-        {% endif %} {% if dashboard.user_type == 'student' %} {% if
-        dashboard.current_year %}
-        <p>Year in Program: {{ dashboard.current_year }}</p>
-        {% endif %} {% if dashboard.expected_graduation_year %}
-        <p>Expected Graduation: {{ dashboard.expected_graduation_year }}</p>
-        {% endif %} {% else %} {% if dashboard.graduation_year %}
-        <p>Graduation Year: {{ dashboard.graduation_year }}</p>
-        {% endif %} {% endif %}
-        <div class="profile-actions">
+        <p>
+          <strong>Degree:</strong> {{ dashboard.degree_level }} — {{
+          dashboard.degree_name }}
+        </p>
+
+        {% if dashboard.user_type == 'student' %}
+        <p>
+          <strong>Years in Program:</strong> {{ dashboard.current_year or 'N/A'
+          }}
+        </p>
+        <p>
+          <strong>Expected Graduation:</strong> {{
+          dashboard.expected_graduation_year or 'N/A' }}
+        </p>
+        {% else %}
+        <p>
+          <strong>Current Position:</strong> {{ dashboard.current_position or
+          'N/A' }}
+        </p>
+        <p><strong>Company:</strong> {{ dashboard.company_name or 'N/A' }}</p>
+        {% endif %}
+
+        <div class="profile-actions mt-3">
           <a href="{{ url_for('profile') }}" class="btn">View Profile</a>
-          <a href="{{ url_for('contacts') }}" class="btn">Contacts</a>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Row 2 -->
+  <!-- ============================================================
+       ROW 2 — Academic Progress + Preferences
+  ============================================================ -->
   <div class="row g-4 mb-4">
     <!-- Academic Progress -->
     <div class="col-lg-6">
@@ -50,69 +66,53 @@
       </div>
     </div>
 
-    <!-- Location / Preferences -->
+    <!-- Preferences / Location -->
     <div class="col-lg-6">
-      <div class="card">
-        <div class="card-header">
-          {% if dashboard.user_type == 'student' %} Location Preferences {% else
-          %} Location & Region {% endif %}
-        </div>
+      <div class="card stat-card">
+        <div class="card-header">Preferences</div>
         <div class="card-body">
-          {% if dashboard.user_type == 'student' %}
           <p>
-            <strong>Preferred Location:</strong> {{ dashboard.location_display
-            or 'Not set yet' }}
+            <strong>Organization:</strong> {{ dashboard.loc_org or 'Not set' }}
+          </p>
+          <p><strong>City:</strong> {{ dashboard.loc_city or 'Not set' }}</p>
+          <p><strong>State:</strong> {{ dashboard.loc_state or 'Not set' }}</p>
+          <p>
+            <strong>Country:</strong> {{ dashboard.loc_country or 'Not set' }}
           </p>
           <p>
-            <strong>Preferred Industry:</strong> {{ dashboard.industry_name or
-            'Not set yet' }}
+            <strong>Region:</strong> {{ dashboard.loc_region or 'Not set' }}
           </p>
-          {% else %}
-          <p>
-            <strong>Current Location:</strong> {{ dashboard.location_display or
-            'Not set yet' }}
-          </p>
-          <p>
-            <strong>Industry:</strong> {{ dashboard.industry_name or 'Not set
-            yet' }}
-          </p>
-          {% endif %}
         </div>
       </div>
     </div>
   </div>
   <!-- END Row 2 -->
 
-  <!-- Row 3 -->
+  <!-- ============================================================
+       ROW 3 — Career Pathways + Mentorship + Networking
+  ============================================================ -->
   <div class="row g-4">
     <!-- Career Pathways -->
     <div class="col-lg-4">
       <div class="card stat-card">
         <div class="card-header">Career Pathways</div>
         <div class="card-body">
-          {% if dashboard.user_type == 'alumni' %}
           <p>
-            <strong>Company:</strong> {{ dashboard.company_name or 'Not set yet'
+            <strong>Industry:</strong> {{ dashboard.industry_name or 'Not set'
             }}
           </p>
           <p>
-            <strong>Role:</strong> {{ dashboard.current_position or 'Not set
-            yet' }}
-          </p>
-          {% if dashboard.graduation_year %}
-          <p>
-            <strong>Graduation Year:</strong> {{ dashboard.graduation_year }}
-          </p>
-          {% endif %} {% else %}
-          <p>
-            <strong>Target Industry:</strong> {{ dashboard.industry_name or 'Not
-            set yet' }}
+            <strong>Sub-Industry:</strong> {{ dashboard.sub_industry or 'Not
+            set' }}
           </p>
           <p>
-            <strong>Preferred Location:</strong> {{ dashboard.location_display
-            or 'Not set yet' }}
+            <strong>Sector Code:</strong> {{ dashboard.sector_code or 'Not set'
+            }}
           </p>
-          {% endif %}
+          <p>
+            <strong>Description:</strong> {{ dashboard.industry_description or
+            'Not available' }}
+          </p>
         </div>
       </div>
     </div>
@@ -124,14 +124,21 @@
         <div class="card-body">
           {% if dashboard.user_type == 'student' %}
           <p>
-            <strong>Seeking Mentor:</strong> {{ 'Yes' if
-            dashboard.is_seeking_mentorship else 'No' }}
+            <strong>Seeking Mentor:</strong>
+            {{ 'Yes' if dashboard.is_seeking_mentorship else 'No' }}
           </p>
-          <p><strong>Possible Mentors:</strong> Coming soon</p>
+          <p>
+            <strong>Profile Visibility:</strong> {{ dashboard.profile_visibility
+            }}
+          </p>
           {% else %}
           <p>
-            <strong>Open to Mentoring:</strong> {{ 'Yes' if dashboard.is_mentor
-            else 'No' }}
+            <strong>Open to Mentoring:</strong>
+            {{ 'Yes' if dashboard.is_mentor else 'No' }}
+          </p>
+          <p>
+            <strong>Profile Visibility:</strong> {{ dashboard.profile_visibility
+            }}
           </p>
           {% endif %}
         </div>
@@ -154,14 +161,15 @@
 </div>
 <!-- END dashboard-container -->
 
-<!-- === Chart.js === -->
+<!-- ============================================================
+     Chart.js
+============================================================ -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const completedClasses = 2;
   const plannedClasses = 19;
   const ctx = document.getElementById("progressChart").getContext("2d");
-  ctx.canvas.style.width = "200px";
-  ctx.canvas.style.height = "200px";
+
   new Chart(ctx, {
     type: "doughnut",
     data: {
@@ -181,15 +189,9 @@
           position: "bottom",
           labels: { boxWidth: 15 },
         },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return `${context.label}: ${context.parsed}`;
-            },
-          },
-        },
       },
     },
   });
 </script>
+
 {% endblock %}

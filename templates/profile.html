@@ -1,38 +1,245 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="cgu-title">Profile</h1>
 
-<div class="profile-section">
+<h2 class="fw-bold text-center mb-4" style="color: var(--cgu-red)">
+  Your Profile
+</h2>
 
-  <!-- Display About Me -->
-  <div id="about-display">
-    <h2>About Me</h2>
-    <p>{{ about_me }}</p>
-    <button class="btn edit-btn" onclick="toggleEdit()">✏️ Edit</button>
+<div class="glass-card p-4 p-md-5">
+
+  <!-- ====================================== -->
+  <!-- DISPLAY MODE -->
+  <!-- ====================================== -->
+  <div id="profile-display">
+
+    <!-- MAIN INFORMATION -->
+    <h4 class="section-title mb-3">Main Information</h4>
+
+    {% for label, value in [
+      ('First Name', profile.first_name),
+      ('Last Name', profile.last_name),
+      ('Email', profile.email),
+      ('Phone', profile.phone_number or 'Not set')
+    ] %}
+    <div class="profile-row">
+      <div class="profile-label">{{ label }}:</div>
+      <div class="profile-value">{{ value }}</div>
+    </div>
+    {% endfor %}
+
+    {% if user_type == 'student' %}
+      <div class="profile-row"><div class="profile-label">Degree Level:</div><div class="profile-value">{{ profile.degree_level }}</div></div>
+      <div class="profile-row"><div class="profile-label">Degree Name:</div><div class="profile-value">{{ profile.degree_name }}</div></div>
+      <div class="profile-row"><div class="profile-label">Year in Program:</div><div class="profile-value">{{ profile.current_year }}</div></div>
+      <div class="profile-row"><div class="profile-label">Expected Graduation:</div><div class="profile-value">{{ profile.expected_graduation_year }}</div></div>
+    {% else %}
+      <div class="profile-row"><div class="profile-label">Company:</div><div class="profile-value">{{ profile.company_name or 'Not set' }}</div></div>
+      <div class="profile-row"><div class="profile-label">Position:</div><div class="profile-value">{{ profile.current_position or 'Not set' }}</div></div>
+    {% endif %}
+
+    <hr class="glass-hr my-4" />
+
+    <!-- PREFERENCES -->
+    <h4 class="section-title mb-3">Preferences</h4>
+
+    {% for label, value in [
+      ('Organization', profile.org_name or 'Not set'),
+      ('City', profile.city or 'Not set'),
+      ('State', profile.state or 'Not set'),
+      ('Country', profile.country or 'Not set'),
+      ('Region', profile.region or 'Not set')
+    ] %}
+    <div class="profile-row">
+      <div class="profile-label">{{ label }}:</div>
+      <div class="profile-value">{{ value }}</div>
+    </div>
+    {% endfor %}
+
+    <hr class="glass-hr my-4" />
+
+    <!-- CAREER -->
+    <h4 class="section-title mb-3">Career Pathways</h4>
+
+    {% for label, value in [
+      ('Industry', profile.industry_name or 'Not set'),
+      ('Sub-Industry', profile.sub_industry or 'Not set'),
+      ('Sector Code', profile.sector_code or 'Not set'),
+      ('Description', profile.industry_description or 'Not set')
+    ] %}
+    <div class="profile-row">
+      <div class="profile-label">{{ label }}:</div>
+      <div class="profile-value">{{ value }}</div>
+    </div>
+    {% endfor %}
+
+    <hr class="glass-hr my-4" />
+
+    <!-- MENTORSHIP -->
+    <h4 class="section-title mb-3">Mentorship</h4>
+
+    {% if user_type == 'student' %}
+      <div class="profile-row"><div class="profile-label">Seeking Mentor:</div><div class="profile-value">{{ 'Yes' if profile.is_seeking_mentorship else 'No' }}</div></div>
+    {% else %}
+      <div class="profile-row"><div class="profile-label">Open to Mentoring:</div><div class="profile-value">{{ 'Yes' if profile.is_mentor else 'No' }}</div></div>
+    {% endif %}
+    <div class="profile-row"><div class="profile-label">Profile Visibility:</div><div class="profile-value">{{ profile.profile_visibility }}</div></div>
+
+    <hr class="glass-hr my-4" />
+
+    <button class="btn glow-btn w-100" onclick="toggleEdit()">
+      ✏️ Edit Profile
+    </button>
   </div>
 
-  <!-- Hidden form for editing -->
-  <form id="edit-form" method="POST" style="display: none;">
-    <textarea name="about_me" rows="5" class="form-control" placeholder="Write something about yourself...">{{ about_me }}</textarea>
-    <div class="form-actions">
-      <button type="submit" class="btn save-btn">Save</button>
-      <button type="button" class="btn cancel-btn" onclick="toggleEdit()">Cancel</button>
-    </div>
-  </form>
+  <!-- ====================================== -->
+  <!-- EDIT MODE -->
+  <!-- ====================================== -->
+  <form id="profile-edit" method="POST" style="display:none">
 
+    <!-- MAIN INFO -->
+    <h4 class="section-title mb-3 mt-3">Main Information</h4>
+
+    <div class="profile-row">
+      <div class="profile-label">First Name:</div>
+      <div class="profile-value">{{ profile.first_name }}</div>
+    </div>
+
+    <div class="profile-row">
+      <div class="profile-label">Last Name:</div>
+      <div class="profile-value">{{ profile.last_name }}</div>
+    </div>
+
+    <div class="profile-row">
+      <div class="profile-label">Email:</div>
+      <div class="profile-value">{{ profile.email }}</div>
+    </div>
+
+    <!-- Editable phone -->
+    <div class="profile-row">
+      <div class="profile-label">Phone:</div>
+      <input name="phone_number" class="profile-input" value="{{ profile.phone_number or '' }}">
+    </div>
+
+    {% if user_type == 'student' %}
+      <div class="profile-row"><div class="profile-label">Degree Level:</div><div class="profile-value">{{ profile.degree_level }}</div></div>
+      <div class="profile-row"><div class="profile-label">Degree Name:</div><div class="profile-value">{{ profile.degree_name }}</div></div>
+
+      <div class="profile-row">
+        <div class="profile-label">Year in Program:</div>
+        <input name="current_year" type="number" class="profile-input" value="{{ profile.current_year or '' }}">
+      </div>
+
+      <div class="profile-row">
+        <div class="profile-label">Expected Graduation:</div>
+        <input name="expected_graduation_year" type="number" class="profile-input" value="{{ profile.expected_graduation_year or '' }}">
+      </div>
+    {% else %}
+      <div class="profile-row">
+        <div class="profile-label">Company:</div>
+        <input name="company_name" class="profile-input" value="{{ profile.company_name or '' }}">
+      </div>
+
+      <div class="profile-row">
+        <div class="profile-label">Position:</div>
+        <input name="current_position" class="profile-input" value="{{ profile.current_position or '' }}">
+      </div>
+    {% endif %}
+
+    <hr class="glass-hr my-4" />
+
+    <!-- ====================================== -->
+    <!-- PREFERENCES -->
+    <h4 class="section-title mb-3">Preferences</h4>
+
+    <!-- Organization (dropdown) -->
+    <div class="profile-row">
+      <div class="profile-label">Organization:</div>
+      <select name="job_location_id" class="profile-input select-input">
+        {% for loc in locations %}
+          <option value="{{ loc.job_location_id }}" 
+            {% if loc.job_location_id == profile.job_location_id %} selected {% endif %}>
+            {{ loc.organization_name }} — {{ loc.city }}, {{ loc.state }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Read-only city/state/country/region -->
+    <div class="profile-row"><div class="profile-label">City:</div><div class="profile-value">{{ profile.city }}</div></div>
+    <div class="profile-row"><div class="profile-label">State:</div><div class="profile-value">{{ profile.state }}</div></div>
+    <div class="profile-row"><div class="profile-label">Country:</div><div class="profile-value">{{ profile.country }}</div></div>
+    <div class="profile-row"><div class="profile-label">Region:</div><div class="profile-value">{{ profile.region }}</div></div>
+
+    <hr class="glass-hr my-4" />
+
+    <!-- ====================================== -->
+    <!-- CAREER -->
+    <h4 class="section-title mb-3">Career Pathways</h4>
+
+    <div class="profile-row"><div class="profile-label">Industry:</div><div class="profile-value">{{ profile.industry_name }}</div></div>
+
+    <div class="profile-row">
+      <div class="profile-label">Sub-Industry:</div>
+      <select name="industry_id" class="profile-input select-input">
+        {% for ind in industries %}
+          <option value="{{ ind.industry_id }}"
+            {% if ind.industry_id == profile.industry_id %} selected {% endif %}>
+            {{ ind.industry_name }} — {{ ind.sub_industry }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="profile-row"><div class="profile-label">Sector Code:</div><div class="profile-value">{{ profile.sector_code }}</div></div>
+    <div class="profile-row"><div class="profile-label">Description:</div><div class="profile-value">{{ profile.industry_description }}</div></div>
+
+    <hr class="glass-hr my-4" />
+
+    <!-- ====================================== -->
+    <!-- MENTORSHIP -->
+    <h4 class="section-title mb-3">Mentorship</h4>
+
+    {% if user_type == 'student' %}
+      <div class="profile-row">
+        <div class="profile-label">Seeking Mentor:</div>
+        <select name="is_seeking_mentorship" class="profile-input select-input">
+          <option value="0" {% if not profile.is_seeking_mentorship %}selected{% endif %}>No</option>
+          <option value="1" {% if profile.is_seeking_mentorship %}selected{% endif %}>Yes</option>
+        </select>
+      </div>
+    {% else %}
+      <div class="profile-row">
+        <div class="profile-label">Open to Mentoring:</div>
+        <select name="is_mentor" class="profile-input select-input">
+          <option value="0" {% if not profile.is_mentor %}selected{% endif %}>No</option>
+          <option value="1" {% if profile.is_mentor %}selected{% endif %}>Yes</option>
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="profile-row">
+      <div class="profile-label">Visibility:</div>
+      <select name="profile_visibility" class="profile-input select-input">
+        {% for option in ['public','private','institution-only'] %}
+          <option value="{{ option }}" {% if profile.profile_visibility == option %}selected{% endif %}>
+            {{ option }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary glow-btn w-100 mt-4">Save Changes</button>
+  </form>
 </div>
 
-<a href="{{ url_for('dashboard') }}" class="btn back-btn">← Back to Dashboard</a>
-
-<!-- Small JavaScript to toggle edit mode -->
 <script>
-  function toggleEdit() {
-    const display = document.getElementById('about-display');
-    const form = document.getElementById('edit-form');
-    const isHidden = form.style.display === 'none';
-    form.style.display = isHidden ? 'block' : 'none';
-    display.style.display = isHidden ? 'none' : 'block';
-  }
+function toggleEdit() {
+  const view = document.getElementById("profile-display");
+  const edit = document.getElementById("profile-edit");
+  const show = edit.style.display === "none";
+  view.style.display = show ? "none" : "block";
+  edit.style.display = show ? "block" : "none";
+}
 </script>
+
 {% endblock %}
