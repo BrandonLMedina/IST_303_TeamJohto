@@ -59,9 +59,11 @@ Project Timeline
 
 - Part A (Ideation & Planning): Due 9/11
 
-- [Part B (Design & Implementation Start): Due 10/2](docs/Assignment%20Docs/Part%20B.md)
+- [Part B (Design & Implementation Start): Due 10/2](docs/Assignment%20Docs/Part%20B)
 
-- [Part C: Presentation](docs/Assignment Docs)
+- [Part C: Presentation](docs/Assignment%20Docs/Part%20C)
+
+- [Part D: Final](docs/Assignment%20Docs/Part%20D)
 
 1. Decompose User Stories into Tasks
    -User Story 1: Alumni (Brandon Medina Assigned)
