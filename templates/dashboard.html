@@ -241,8 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          industry_id: 1  // TODO: replace with the real id from your dashboard
-          // or { industry_name: "Telecommunications" }
+          industry_id: 1  // TODO: later: replace or remove; backend can use user's industry
         })
       });
 
@@ -266,12 +265,23 @@ document.addEventListener("DOMContentLoaded", () => {
       data.jobs.forEach(job => {
         const div = document.createElement("div");
         div.className = "p-2 mb-2 border rounded";
+
+        // Safely handle missing links
+        const links = job.links || {};
+        const linkedinUrl = links.linkedin || "#";
+        const indeedUrl = links.indeed || "#";
+
         div.innerHTML = `
           <strong>${job.job_title}</strong><br>
           <p>${job.short_summary}</p>
           <p><strong>Search query:</strong> ${job.suggested_search_query}</p>
           <p><strong>Keywords:</strong> ${job.recommended_keywords}</p>
           <p><strong>Typical locations:</strong> ${job.typical_locations}</p>
+          <p><strong>Job search links:</strong>
+            <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            |
+            <a href="${indeedUrl}" target="_blank" rel="noopener noreferrer">Indeed</a>
+          </p>
         `;
         resultsDiv.appendChild(div);
       });
@@ -283,6 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 
 
 {% endblock %}

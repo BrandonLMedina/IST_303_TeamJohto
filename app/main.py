@@ -4,6 +4,7 @@ import sqlite3
 import pandas as pd
 from openai import OpenAI
 import json
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -24,109 +25,6 @@ app.config['SECRET_KEY'] = 'your secret key34165421654521'
 
 
 client = OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
-career_csv_path = os.path.join(BASE_DIR, 'db', 'test_data', 'industries.csv')
-career_df = pd.read_csv(career_csv_path)
-
-def get_industry_by_id(industry_id: int):
-    # Make sure industry_id is int
-    industry_id = int(industry_id)
-
-    # Use the correct column name from your CSV
-    row = career_df[career_df["industry_id"] == industry_id]
-
-    if row.empty:
-        return None
-
-    row = row.iloc[0]
-
-    return {
-        "industry_id": row["industry_id"],
-        "industry_name": row["industry_name"],
-        "sub_industry": row["sub_industry"],
-        "description": row["description"]
-    }
-
-
-##openai search
-@app.route("/api/job-opportunities", methods=["POST"])
-def job_opportunities():
-    data = request.get_json() or {}
-    print("🔍 Incoming JSON:", data)
-
-    industry_id = data.get("industry_id")
-    industry_name = data.get("industry_name")
-
-    if industry_id is not None:
-        industry = get_industry_by_id(int(industry_id))
-    elif industry_name:
-        industry = get_industry_by_industry(industry_name)
-    else:
-        return jsonify({"error": "industry_id or industry_name is required"}), 400
-
-    if industry is None:
-        return jsonify({"error": "industry not found"}), 404
-
-    print("🔍 Industry found:", industry)
-
-    industry_name_val = industry["industry_name"]
-    sub_industry = industry["sub_industry"]
-    description = industry["description"]
-
-    prompt = f"""
-You are a career advisor and job search assistant.
-
-Career pathway from database:
-- Industry: {industry_name_val}
-- Sub-industry: {sub_industry}
-- Description: {description}
-
-1. Propose 1-5 specific job titles that would be a strong match.
-2. For each, generate:
-   - job_title
-   - short_summary (1–2 sentences)
-   - suggested_search_query (what the user should type into a job site like LinkedIn, Indeed, etc.)
-   - recommended_keywords (comma-separated list)
-   - typical_locations (short text, e.g. "Remote or major tech hubs")
-
-Return ONLY a valid JSON list of objects, like:
-[
-  {{
-    "job_title": "...",
-    "short_summary": "...",
-    "suggested_search_query": "...",
-    "recommended_keywords": "...",
-    "typical_locations": "..."
-  }},
-  ...
-]
-"""
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.4,
-        )
-    except Exception as e:
-        print("❌ OpenAI error:", repr(e))
-        return jsonify({"error": f"OpenAI error: {str(e)}"}), 500
-
-    content = response.choices[0].message.content
-    print("🔍 Raw OpenAI content:", content[:400], " ...")
-
-    try:
-        jobs = json.loads(content)
-    except json.JSONDecodeError as e:
-        print("❌ JSON decode error:", e)
-        return jsonify({
-            "error": "AI response was not valid JSON",
-            "raw": content
-        }), 500
-
-    return jsonify({"jobs": jobs})
-
-
-
 
 # --------------------------------------------------------------
 # DB CONNECTION
@@ -136,6 +34,162 @@ def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+    
+    
+def get_industry_by_id(industry_id: int):
+    industry_id = int(industry_id)
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT industry_id, industry_name, sub_industry, description
+        FROM industries
+        WHERE industry_id = ?
+    """, (industry_id,))
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    return dict(row)
+
+
+##openai search
+@app.route("/api/job-opportunities", methods=["POST"])
+def job_opportunities():
+    # Require login
+    if not session.get("logged_in"):
+        return jsonify({"error": "User not logged in"}), 401
+
+    user_id = session.get("user_id")
+    user = get_user_by_id(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    data = request.get_json() or {}
+    print("Incoming JSON:", data)
+
+    # You *could* let frontend override, but simplest is to just ignore it:
+    # industry_id_from_frontend = data.get("industry_id")
+    # industry_name_from_frontend = data.get("industry_name")
+
+    # Always use the user’s stored pathway
+    industry_id = user.get("desired_industry_id") or user.get("industry_id")
+    if not industry_id:
+        return jsonify({"error": "User has no industry set"}), 400
+
+    industry = get_industry_by_id(int(industry_id))
+    if industry is None:
+        return jsonify({"error": "industry not found"}), 404
+
+    print("Industry found:", industry)
+
+    industry_name_val = industry["industry_name"]
+    sub_industry = industry["sub_industry"]
+    description = industry["description"]
+
+    prompt = f"""
+You are a career advisor and job search assistant.
+
+User profile:
+- Name: {user['first_name']} {user['last_name']}
+- User type: {user['user_type']}
+
+Career pathway from database:
+- Industry: {industry_name_val}
+- Sub-industry: {sub_industry}
+- Description: {description}
+
+1. Propose 1–5 specific job titles that would be a strong match for THIS user.
+2. For each, generate:
+   - job_title
+   - short_summary (1–2 sentences)
+   -    - suggested_search_query (a short phrase we can paste into job sites, e.g. "entry level data analyst" or "software engineer internship")
+   - recommended_keywords (comma-separated list)
+   - typical_locations (short text, e.g. "Remote or major tech hubs")
+
+Return ONLY a valid JSON list of objects, with no explanations, no markdown, and no code fences.
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4,
+        )
+    except Exception as e:
+        print("OpenAI error:", repr(e))
+        return jsonify({"error": f"OpenAI error: {str(e)}"}), 500
+
+    content = (response.choices[0].message.content or "").strip()
+    print("Raw OpenAI content:", content[:400], " ...")
+
+    if content.startswith("```"):
+        lines = content.splitlines()
+        if lines and lines[0].strip().startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip().startswith("```"):
+            lines = lines[:-1]
+        content = "\n".join(lines).strip()
+
+        # At this point, content *should* be pure JSON
+    try:
+        jobs = json.loads(content)
+    except json.JSONDecodeError as e:
+        print("JSON decode error:", e)
+        return jsonify({
+            "error": "AI response was not valid JSON",
+            "raw": content
+        }), 500
+
+        # 🔗 Add search URLs for each job using the suggested_search_query
+    for job in jobs:
+        query = job.get("suggested_search_query") or job.get("job_title") or ""
+        query_encoded = quote_plus(query)
+
+        job["links"] = {
+            "linkedin": f"https://www.linkedin.com/jobs/search/?keywords={query_encoded}",
+            "indeed":   f"https://www.indeed.com/jobs?q={query_encoded}",
+            # Add more if you want:
+            # "glassdoor": f"https://www.glassdoor.com/Job/jobs.htm?sc.keyword={query_encoded}",
+        }
+
+    return jsonify({"jobs": jobs}), 200
+
+
+  
+
+    
+
+def get_user_by_id(user_id: int):
+    """Fetch a user row as a dict."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT
+            user_id,
+            first_name,
+            last_name,
+            email,
+            user_type,
+            current_position,
+            company_name,
+            current_year,
+            expected_graduation_year,
+            graduation_year,
+            desired_industry_id,
+            industry_id
+        FROM users
+        WHERE user_id = ?
+    """, (user_id,))
+    row = cur.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+
+    return dict(row)
+
 
 # --------------------------------------------------------------
 # LOGIN PROTECTION
