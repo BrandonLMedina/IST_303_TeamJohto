@@ -312,3 +312,63 @@ Total work = 200 hrs, completed in 60 days (velocity assumed = 20 hrs/week/team 
 - Part D (Final Presentation): Due 11/20
 
 ---
+How to run the program/test/testconverage
+Session-based auth & routing: How login writes a session and then redirects to /dashboard, which queries the DB by user_id.
+Data modeling & joins: Designing normalized tables and using LEFT JOINs to show student vs. alumni fields in one dashboard.
+Team workflow: Using Git/GitHub (branches, PRs, code reviews) to merge front-end templates and back-end APIs without breaking others.
+
+## Running the Alumni Network Dashboard
+
+### 1. Prerequisites
+- Ensure `pip` is available so you can `pip install` requirements from [requirements.txt](requirements.txt) in step 4.
+- Have SQLite installed (macOS and most Linux distros already include it).
+- Obtain an OpenAI API key; it will be required for the AI-powered dashboard widgets.
+
+### 2. Project Setup
+2. Create a virtual environment: `python3 -m venv .venv`.
+3. Activate it:
+   - macOS/Linux: `source .venv/bin/activate`
+   - Windows: `.venv\Scripts\Activate.ps1`
+4. Upgrade tooling and install dependencies:
+   ```bash
+   python -m pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+### 3. Environment Variables and Database
+1. Copy `.env` (or create a new one at the repo root) and set `OPENAI_API_KEY=your_key_here`.
+2. If you need a clean database, run:
+   ```bash
+   python db/reset_db.py
+   python db/seed_db.py
+   ```
+   This recreates `instance/database.db` and loads the CSV fixtures from `db/test_data/`.
+   
+### 4. Launching Flask
+1. Ensure the virtual environment remains active.
+2. Start the dev server:
+   ```bash
+   flask --app app.main --debug run
+   ```
+3. Open `http://127.0.0.1:5000/` in a browser to reach the landing page and `/login` form.
+
+### 5. Logging In and Exploring
+- Use any seeded credentials from `db/test_data/users.csv`. Examples:
+  - Student: `email1@cgu.edu.invalid` / `password`
+  - Alumni: `email6@cgu.edu.invalid` / `password`
+- After login you are redirected to `/dashboard`, which hydrates student/alumni data by joining the `users`, `degree_concentrations`, `industries`, and `job_locations` tables.
+- Visit `/profile` to review or update editable fields. The AI job suggestion endpoint requires your OpenAI key.
+
+### 6. Shutting Down
+- Stop the Flask server with `Ctrl+C`.
+- Deactivate the virtual environment (`deactivate`) when you are finished working.
+
+
+
+
+
+Three most important things we learned about software development
+
+The three things we learned as a team that we agreed were the most valuable was how to work as a team, time management, and essentially learning that we are our own barriers of progress
+we thought it was a valuable skill to learn how to work with each and manage our time correctly so we could join team standups and things of that nature.
+The reason why we thought of mentioning that we are our own barriers is due to us having an open mind in general since we never worked with AI agents
+we had an open mind and spearheaded this project.
