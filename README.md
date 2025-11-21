@@ -299,7 +299,7 @@ Total work = 200 hrs, completed in 60 days (velocity assumed = 20 hrs/week/team 
 
 5. Burn Down Chart
 
-<img width="1200" height="600" alt="burndown_chart" src="https://github.com/user-attachments/assets/1bf68f78-9d45-466d-9b6f-e5ca722da7ac" />
+<img width="1200" height="600" alt="burndown_chart" src="[https://github.com/user-attachments/assets/1bf68f78-9d45-466d-9b6f-e5ca722da7ac](https://github.com/BrandonLMedina/IST_303_TeamJohto/blob/main/docs/Assignment%20Docs/Part%20D/burndown_chart.png)" />
 
 6. [Stand-Up Meetings](docs/Standups)
 
